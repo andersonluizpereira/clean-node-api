@@ -1,6 +1,6 @@
 {
   "name": "clean-node-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Construindo uma API Rest em NodeJS utilizando TDD, Clean Architecture e Design Patterns.",
   "main": "src/main/index.js",
   "scripts": {
