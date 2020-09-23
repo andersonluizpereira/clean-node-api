@@ -1,0 +1,1 @@
+db.users.insert({'email':'andy2903.alp@gmail.com', 'password':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjZhYjM3NGZhNTU1NzE3MWFlOWExODAiLCJpYXQiOjE2MDA4Mjg0NjV9.XLsmIPndH87qOuNHlQLwRPJmuk7zjnliF12eMcEQKyA'})
