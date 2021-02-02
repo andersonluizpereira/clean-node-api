@@ -3,4 +3,4 @@ node_js:
   - 12
 script:
   - standard
-  - npm run test:coveralls
+  - npm run test:ci
