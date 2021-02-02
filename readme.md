@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/andersonluizpereira/clean-node-api/badge.svg?branch=master)](https://coveralls.io/github/andersonluizpereira/clean-node-api?branch=master)
 [![Build Status](https://travis-ci.com/andersonluizpereira/clean-node-api.svg?branch=master)](https://travis-ci.com/andersonluizpereira/clean-node-api)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
