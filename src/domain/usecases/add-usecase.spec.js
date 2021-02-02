@@ -65,17 +65,44 @@ const makeUpdateAccessTokenRepositoryWithError = () => {
   return new UpdateAccessTokenRepositorySpy()
 }
 
+const makeLoadUserByEmailRepository = () => {
+  class LoadUserByEmailRepositorySpy {
+    async load (email) {
+      this.email = email
+      return this.user
+    }
+  }
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+  loadUserByEmailRepositorySpy.user = {
+    id: 'any_id',
+    password: 'hashed_password'
+  }
+  return loadUserByEmailRepositorySpy
+}
+
+const makeLoadUserByEmailRepositoryWithError = () => {
+  class LoadUserByEmailRepositorySpy {
+    async load () {
+      throw new Error()
+    }
+  }
+  return new LoadUserByEmailRepositorySpy()
+}
+
 const makeSut = () => {
   const addUserRepositorySpy = makeAddUserRepository()
+  const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository()
   const tokenGeneratorSpy = makeTokenGenerator()
   const updateAccessTokenRepositorySpy = makeUpdateAccessTokenRepository()
   const sut = new AddUseCase({
+    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
     addUserRepository: addUserRepositorySpy,
     updateAccessTokenRepository: updateAccessTokenRepositorySpy,
     tokenGenerator: tokenGeneratorSpy
   })
   return {
     sut,
+    loadUserByEmailRepositorySpy,
     addUserRepositorySpy,
     tokenGeneratorSpy,
     updateAccessTokenRepositorySpy
@@ -86,6 +113,7 @@ describe('Add UseCase', () => {
   test('Should throw if no email is provided', async () => {
     const { sut } = makeSut()
     const user = {
+      email: '',
       password: 'hashed_password'
     }
     const promise = sut.add(user)
@@ -102,35 +130,19 @@ describe('Add UseCase', () => {
   })
 
   test('Should call AddUserRepository with correct values', async () => {
-    const { sut } = makeSut()
+    const { sut, loadUserByEmailRepositorySpy } = makeSut()
     const data = {
       email: 'any_email@mail.com',
       password: 'hashed_password'
     }
-    const user = await sut.add(data)
-    expect(user.email).toBe('any_email@mail.com')
-    expect(user.password).toBe('any_token')
-  })
-
-  test('Should call AddUserRepository with correct values', async () => {
-    const { sut } = makeSut()
-    const data = {
-      email: 'any_email@mail.com',
-      password: 'hashed_password'
-    }
+    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockReturnValueOnce(null)
     const user = await sut.add(data)
     expect(user.email).toBe('any_email@mail.com')
     expect(user.password).toBe('any_token')
   })
 
   test('Should throw if any dependency throws return null', async () => {
-    const addUserRepository = makeAddUserRepository()
-    const tokenGenerator = makeTokenGenerator()
-    const sut = new AddUseCase({
-      addUserRepository,
-      tokenGenerator,
-      updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
-    })
+    const { sut } = makeSut()
     const data = {
       email: 'any_email@mail.com',
       password: 'hashed_password'
@@ -151,6 +163,12 @@ describe('Add UseCase', () => {
         tokenGenerator: makeTokenGeneratorWithError()
       }),
       new AddUseCase({
+        addUserRepository,
+        tokenGenerator,
+        updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
+      }),
+      new AddUseCase({
+        loadUserByEmailRepositorySpy: makeLoadUserByEmailRepositoryWithError(),
         addUserRepository,
         tokenGenerator,
         updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
