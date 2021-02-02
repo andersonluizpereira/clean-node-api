@@ -8,19 +8,22 @@ module.exports = class AddUseCase {
   }
 
   async add (data) {
-    if (!data.email) {
-      throw new MissingParamError('email')
+    try {
+      if (!data.email) {
+        throw new MissingParamError('email')
+      }
+      if (!data.password) {
+        throw new MissingParamError('password')
+      }
+      data.password = await this.tokenGenerator.generate(data.password)
+      const user = await this.addUserRepository.add(data)
+      if (user) {
+        const accessToken = await this.tokenGenerator.generate(user.id)
+        await this.updateAccessTokenRepository.update(user.id, accessToken)
+        return user
+      }
+    } catch (error) {
+      return null
     }
-    if (!data.password) {
-      throw new MissingParamError('password')
-    }
-    data.password = await this.tokenGenerator.generate(data.password)
-    const user = await this.addUserRepository.add(data)
-    if (user) {
-      const accessToken = await this.tokenGenerator.generate(user.id)
-      await this.updateAccessTokenRepository.update(user.id, accessToken)
-      return user
-    }
-    return null
   }
 }

@@ -38,6 +38,33 @@ const makeUpdateAccessTokenRepository = () => {
   return new UpdateAccessTokenRepositorySpy()
 }
 
+const makeAddUserRepositoryWithError = () => {
+  class AddUserRepositorySpy {
+    async add () {
+      throw new Error()
+    }
+  }
+  return new AddUserRepositorySpy()
+}
+
+const makeTokenGeneratorWithError = () => {
+  class TokenGeneratorSpy {
+    async generate () {
+      throw new Error()
+    }
+  }
+  return new TokenGeneratorSpy()
+}
+
+const makeUpdateAccessTokenRepositoryWithError = () => {
+  class UpdateAccessTokenRepositorySpy {
+    async update () {
+      throw new Error()
+    }
+  }
+  return new UpdateAccessTokenRepositorySpy()
+}
+
 const makeSut = () => {
   const addUserRepositorySpy = makeAddUserRepository()
   const tokenGeneratorSpy = makeTokenGenerator()
@@ -72,5 +99,70 @@ describe('Add UseCase', () => {
     }
     const promise = sut.add(user)
     expect(promise).rejects.toThrow(new MissingParamError('password'))
+  })
+
+  test('Should call AddUserRepository with correct values', async () => {
+    const { sut } = makeSut()
+    const data = {
+      email: 'any_email@mail.com',
+      password: 'hashed_password'
+    }
+    const user = await sut.add(data)
+    expect(user.email).toBe('any_email@mail.com')
+    expect(user.password).toBe('any_token')
+  })
+
+  test('Should call AddUserRepository with correct values', async () => {
+    const { sut } = makeSut()
+    const data = {
+      email: 'any_email@mail.com',
+      password: 'hashed_password'
+    }
+    const user = await sut.add(data)
+    expect(user.email).toBe('any_email@mail.com')
+    expect(user.password).toBe('any_token')
+  })
+
+  test('Should throw if any dependency throws return null', async () => {
+    const addUserRepository = makeAddUserRepository()
+    const tokenGenerator = makeTokenGenerator()
+    const sut = new AddUseCase({
+      addUserRepository,
+      tokenGenerator,
+      updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
+    })
+    const data = {
+      email: 'any_email@mail.com',
+      password: 'hashed_password'
+    }
+    const user = await sut.add(data)
+    expect(user).toBeNull()
+  })
+
+  test('Should throw if any dependency throws', async () => {
+    const addUserRepository = makeAddUserRepository()
+    const tokenGenerator = makeTokenGenerator()
+    const suts = [].concat(
+      new AddUseCase({
+        addUserRepository: makeAddUserRepositoryWithError()
+      }),
+      new AddUseCase({
+        addUserRepository,
+        tokenGenerator: makeTokenGeneratorWithError()
+      }),
+      new AddUseCase({
+        addUserRepository,
+        tokenGenerator,
+        updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
+      })
+    )
+    const data = {
+      email: 'any_email@mail.com',
+      password: 'hashed_password'
+    }
+    for (const sut of suts) {
+      const promise = sut.add(data)
+      expect(promise).rejects.toThrow()
+    }
   })
 })
