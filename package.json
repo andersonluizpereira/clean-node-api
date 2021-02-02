@@ -11,7 +11,8 @@
     "test:staged": "npm test -- --findRelatedTests --silent",
     "test:ci": "npm test -- --coverage --silent",
     "test:coveralls": "npm run test:ci && coveralls < coverage/lcov.info",
-    "check": "npm-check -u -s"
+    "check": "npm-check -u -s",
+    "lint":"npx standard --fix"
   },
   "standard": {
     "env": [
