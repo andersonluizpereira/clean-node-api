@@ -6,6 +6,7 @@ module.exports = class AddUserRepository {
     const result = await userModel.insertOne(data)
     const user = {
       id: result.ops[0]._id,
+      name: result.ops[0].name,
       password: result.ops[0].password
     }
     return user

@@ -20,7 +20,7 @@ describe('Login Routes', () => {
 
   test('Should return 200 with correct values', async () => {
     await request(app)
-      .post('/api/adduser')
+      .post('/api/signup')
       .send({
         email: 'valid_email@mail.com',
         password: 'hashed_password'
@@ -34,7 +34,7 @@ describe('Login Routes', () => {
       password: bcrypt.hashSync('hashed_password', 10)
     })
     await request(app)
-      .post('/api/adduser')
+      .post('/api/signup')
       .send({
         email: 'valid_email@mail.com',
         password: 'hashed_password'
