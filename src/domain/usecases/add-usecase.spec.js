@@ -137,8 +137,8 @@ describe('Add UseCase', () => {
     }
     jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockReturnValueOnce(null)
     const user = await sut.add(data)
+    expect(user).toBeTruthy()
     expect(user.email).toBe('any_email@mail.com')
-    expect(user.password).toBe('any_token')
   })
 
   test('Should throw if any dependency throws return null', async () => {

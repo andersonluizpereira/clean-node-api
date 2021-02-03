@@ -21,6 +21,9 @@ module.exports = class AddUserRouter {
         return HttpResponse.badRequest(new MissingParamError('password'))
       }
       const user = await this.addUseCase.add(httpRequest.body)
+      if (!user) {
+        return HttpResponse.noContent(user)
+      }
       return HttpResponse.ok(user)
     } catch (error) {
       return HttpResponse.serverError()

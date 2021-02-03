@@ -1,11 +1,11 @@
 const { MissingParamError } = require('../../utils/errors')
+const bcrypt = require('bcrypt')
 
 module.exports = class AddUseCase {
-  constructor ({ loadUserByEmailRepository, addUserRepository, updateAccessTokenRepository, tokenGenerator }) {
+  constructor ({ loadUserByEmailRepository, addUserRepository, updateAccessTokenRepository }) {
     this.loadUserByEmailRepository = loadUserByEmailRepository
     this.addUserRepository = addUserRepository
     this.updateAccessTokenRepository = updateAccessTokenRepository
-    this.tokenGenerator = tokenGenerator
   }
 
   async add (data) {
@@ -18,10 +18,8 @@ module.exports = class AddUseCase {
     }
     const account = await this.loadUserByEmailRepository.load(data.email)
     if (!account) {
-      data.password = await this.tokenGenerator.generate(data.password)
+      data.password = bcrypt.hashSync(data.password, 10)
       const user = await this.addUserRepository.add(data)
-      const accessToken = await this.tokenGenerator.generate(user.id)
-      await this.updateAccessTokenRepository.update(user.id, accessToken)
       return user
     }
     return null
