@@ -1,10 +1,16 @@
 jest.mock('bcrypt', () => ({
   isValid: true,
+  digest: 'any_hash',
 
   async compare (value, hash) {
     this.value = value
     this.hash = hash
     return this.isValid
+  },
+  async hash (value, salt) {
+    this.value = value
+    this.salt = salt
+    return this.digest
   }
 }))
 
@@ -17,6 +23,12 @@ const makeSut = () => {
 }
 
 describe('Encrypter', () => {
+  test('Should return hash', async () => {
+    const sut = makeSut()
+    const digest = await sut.hash('any_value', 12)
+    expect(digest).toBe('any_hash')
+  })
+
   test('Should return true if bcrypt returns true', async () => {
     const sut = makeSut()
     const isValid = await sut.compare('any_value', 'hashed_value')
@@ -41,5 +53,11 @@ describe('Encrypter', () => {
     const sut = makeSut()
     expect(sut.compare()).rejects.toThrow(new MissingParamError('value'))
     expect(sut.compare('any_value')).rejects.toThrow(new MissingParamError('hash'))
+  })
+
+  test('Should throw if no params are provided hash', async () => {
+    const sut = makeSut()
+    expect(sut.hash()).rejects.toThrow(new MissingParamError('value'))
+    expect(sut.hash('any_value')).rejects.toThrow(new MissingParamError('salt'))
   })
 })

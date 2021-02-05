@@ -1,16 +1,17 @@
 const { MissingParamError } = require('../../utils/errors')
 const AddUseCase = require('./add-usecase')
 
-const makeTokenGenerator = () => {
-  class TokenGeneratorSpy {
-    async generate (userId) {
-      this.userId = userId
-      return this.accessToken
+const makeEncrypterGenerator = () => {
+  class EncrypterGeneratorSpy {
+    async hash (value, salt) {
+      this.value = value
+      this.salt = salt
+      return this.digest
     }
   }
-  const tokenGeneratorSpy = new TokenGeneratorSpy()
-  tokenGeneratorSpy.accessToken = 'any_token'
-  return tokenGeneratorSpy
+  const encrypterGeneratorSpy = new EncrypterGeneratorSpy()
+  encrypterGeneratorSpy.digest = 'any_token'
+  return encrypterGeneratorSpy
 }
 
 const makeAddUserRepository = () => {
@@ -47,13 +48,13 @@ const makeAddUserRepositoryWithError = () => {
   return new AddUserRepositorySpy()
 }
 
-const makeTokenGeneratorWithError = () => {
-  class TokenGeneratorSpy {
+const makeEncrypterGeneratorWithError = () => {
+  class EncrypterGeneratorSpy {
     async generate () {
       throw new Error()
     }
   }
-  return new TokenGeneratorSpy()
+  return new EncrypterGeneratorSpy()
 }
 
 const makeUpdateAccessTokenRepositoryWithError = () => {
@@ -92,19 +93,19 @@ const makeLoadUserByEmailRepositoryWithError = () => {
 const makeSut = () => {
   const addUserRepositorySpy = makeAddUserRepository()
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepository()
-  const tokenGeneratorSpy = makeTokenGenerator()
+  const encrypterGeneratorSpy = makeEncrypterGenerator()
   const updateAccessTokenRepositorySpy = makeUpdateAccessTokenRepository()
   const sut = new AddUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
     addUserRepository: addUserRepositorySpy,
     updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    tokenGenerator: tokenGeneratorSpy
+    encrypter: encrypterGeneratorSpy
   })
   return {
     sut,
     loadUserByEmailRepositorySpy,
     addUserRepositorySpy,
-    tokenGeneratorSpy,
+    encrypterGeneratorSpy,
     updateAccessTokenRepositorySpy
   }
 }
@@ -153,14 +154,14 @@ describe('Add UseCase', () => {
 
   test('Should throw if any dependency throws', async () => {
     const addUserRepository = makeAddUserRepository()
-    const tokenGenerator = makeTokenGenerator()
+    const tokenGenerator = makeEncrypterGenerator()
     const suts = [].concat(
       new AddUseCase({
         addUserRepository: makeAddUserRepositoryWithError()
       }),
       new AddUseCase({
         addUserRepository,
-        tokenGenerator: makeTokenGeneratorWithError()
+        tokenGenerator: makeEncrypterGeneratorWithError()
       }),
       new AddUseCase({
         addUserRepository,

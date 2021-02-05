@@ -26,6 +26,7 @@ module.exports = class AddUserRouter {
       }
       return HttpResponse.ok(user)
     } catch (error) {
+      console.log(error)
       return HttpResponse.serverError()
     }
   }
