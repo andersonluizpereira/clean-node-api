@@ -9,7 +9,7 @@
 | Comando                      | Descrição                         |
 | ---------------------------- | --------------------------------- |
 | npm run test                 | Running test                      |
-| test:mutation                | Running test mutation             |
+| npm run test:mutation        | Running test mutation             |
 | npm run start                | Running project                   |
 | ---------------------------- | --------------------------------- |
 
