@@ -3,12 +3,13 @@
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
-
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fandersonluizpereira%2Fclean-node-api%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/andersonluizpereira/clean-node-api/master)
 ## Comandos
 | ---------------------------- | --------------------------------- |
 | Comando                      | Descrição                         |
 | ---------------------------- | --------------------------------- |
 | npm run test                 | Running test                      |
+| test:mutation                | Running test mutation             |
 | npm run start                | Running project                   |
 | ---------------------------- | --------------------------------- |
 
@@ -42,6 +43,7 @@
 > ## Metodologias/designs utilizados
 
 * TDD
+* Teste Mutation in usecases (https://stryker-mutator.io/)
 * Clean Architecture
 * DDD
 * Conventional Commits
@@ -72,6 +74,9 @@
 * Lint Staged
 * Eslint
 * Standard Javascript Style
+
+Apply Test mutation
+Bugs, or mutants, are automatically inserted into your production code. Your tests are run for each mutant. If your tests fail then the mutant is killed. If your tests passed, the mutant survived. The higher the percentage of mutants killed, the more effective your tests are.
 
 Create User
 
