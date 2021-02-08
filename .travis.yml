@@ -4,4 +4,3 @@ node_js:
 script:
   - standard
   - npm run test:coveralls
-  - npm run test:mutation 
